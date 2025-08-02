@@ -44,7 +44,6 @@ export const User: Lists.User = list({
       ui: { displayMode: "segmented-control" },
     }),
     videos: relationship({ ref: "Video.author", many: true }),
-    audios: relationship({ ref: "AudioItem.author", many: true }),
     createdAt: timestamp({ defaultValue: { kind: "now" } }),
   },
 });

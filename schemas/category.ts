@@ -25,7 +25,6 @@ export const Category = list({
   },
   fields: {
     name: text({ validation: { isRequired: true } }),
-    description: text({ ui: { displayMode: "textarea" } }),
     videos: relationship({ ref: "Video.categories", many: true }),
   },
 });

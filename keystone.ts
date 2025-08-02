@@ -12,18 +12,33 @@ import cors from "cors";
 import { config as dotenvConfig } from "dotenv";
 
 import { withAuth, session } from "./auth";
-import { searchHandler } from "./api/queries";
+import { searchHandler } from "./api/videos";
+import { categoryHandler } from "./api/categories";
 
 dotenvConfig();
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
-  : ["https://localhost:3000", "https://eternityready.com"];
+  : ["http://localhost:3000", "https://eternityready.com"];
 
 export default withAuth.withAuth(
   config({
     db: {
-      provider: "sqlite",
-      url: "file:./keystone.db",
+      provider: "mysql",
+      url: process.env.DATABASE_URL!,
+      onConnect: async (context) => {
+        if ((await context.db.User.count()) === 0) {
+          console.log("No users found. Create the first one at Admin UI");
+        }
+      },
+    },
+    ui: {
+      isAccessAllowed: async (context) => {
+        const users = await context.db.User.count();
+        if (users === 0) {
+          return true;
+        } // Libera acesso à tela de criação do primeiro user
+        return !!context.session?.data; // Depois disso, exige login
+      },
     },
     lists,
     session,
@@ -55,15 +70,6 @@ export default withAuth.withAuth(
         },
         storagePath: "public/ads",
       },
-      audio_files: {
-        kind: "local",
-        type: "file",
-        generateUrl: (path) => `/audio/${path}`,
-        serverRoute: {
-          path: "/audio",
-        },
-        storagePath: "public/audio",
-      },
     },
     server: {
       extendExpressApp: (app, context) => {
@@ -83,27 +89,38 @@ export default withAuth.withAuth(
           })
         );
 
-        app.use((err, req, res, next) => {
-          if (err instanceof Error && err.message === "Not allowed by CORS") {
-            res.status(403).json({ error: "CORS Error: Not allowed by CORS" });
-          } else {
-            next(err);
+        app.use(
+          (
+            err: Error,
+            req: Request,
+            res: Response,
+            next: (arg0: Error) => void
+          ) => {
+            if (err instanceof Error && err.message === "Not allowed by CORS") {
+              res
+                .status(403)
+                .json({ error: "CORS Error: Not allowed by CORS" });
+            } else {
+              next(err);
+            }
           }
-        });
+        );
+
+        app.use(
+          cors({
+            origin: true, // permite qualquer origem
+            credentials: true,
+          })
+        );
 
         app.use(express.json());
 
         app.get("/api/search", async (req: Request, res: Response) => {
-          const { search_query, page } = req.params;
+          await searchHandler(req, res, context);
+        });
 
-          if (!search_query) {
-            return res.status(400).json({ error: "Search Query is required" });
-          }
-
-          if (!page) {
-            return res.status(400).json({ error: "Page number is required" });
-          }
-          await searchHandler(search_query, page);
+        app.get("/api/categories", async (req: Request, res: Response) => {
+          await categoryHandler(req, res, context);
         });
       },
     },

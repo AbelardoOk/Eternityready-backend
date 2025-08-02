@@ -47,7 +47,8 @@ export const Video = list({
     thumbnail: image({ storage: "thumbnails" }),
     isPublic: checkbox({ defaultValue: true, label: "Público" }),
     categories: relationship({ ref: "Category.videos", many: true }),
-    author: relationship({ ref: "User.videos" }),
+    // author: relationship({ ref: "User.videos" }),
+    author: text({ validation: { isRequired: true } }),
     createdAt: timestamp({ defaultValue: { kind: "now" } }),
   },
 });

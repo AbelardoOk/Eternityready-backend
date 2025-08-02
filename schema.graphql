@@ -6,36 +6,11 @@ type User {
   name: String
   email: String
   password: PasswordState
-  profileImage: ImageFieldOutput
-  role: String
-  videos(where: VideoWhereInput! = {}, orderBy: [VideoOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: VideoWhereUniqueInput): [Video!]
-  videosCount(where: VideoWhereInput! = {}): Int
-  audios(where: AudioItemWhereInput! = {}, orderBy: [AudioItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: AudioItemWhereUniqueInput): [AudioItem!]
-  audiosCount(where: AudioItemWhereInput! = {}): Int
-  createdAt: DateTime
 }
 
 type PasswordState {
   isSet: Boolean!
 }
-
-type ImageFieldOutput {
-  id: ID!
-  filesize: Int!
-  width: Int!
-  height: Int!
-  extension: ImageExtension!
-  url: String!
-}
-
-enum ImageExtension {
-  jpg
-  png
-  webp
-  gif
-}
-
-scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
 
 input UserWhereUniqueInput {
   id: ID
@@ -49,11 +24,6 @@ input UserWhereInput {
   id: IDFilter
   name: StringFilter
   email: StringFilter
-  password: PasswordFilter
-  role: StringNullableFilter
-  videos: VideoManyRelationFilter
-  audios: AudioItemManyRelationFilter
-  createdAt: DateTimeNullableFilter
 }
 
 input IDFilter {
@@ -95,53 +65,10 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
-input PasswordFilter {
-  isSet: Boolean!
-}
-
-input StringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  not: StringNullableFilter
-}
-
-input VideoManyRelationFilter {
-  every: VideoWhereInput
-  some: VideoWhereInput
-  none: VideoWhereInput
-}
-
-input AudioItemManyRelationFilter {
-  every: AudioItemWhereInput
-  some: AudioItemWhereInput
-  none: AudioItemWhereInput
-}
-
-input DateTimeNullableFilter {
-  equals: DateTime
-  in: [DateTime!]
-  notIn: [DateTime!]
-  lt: DateTime
-  lte: DateTime
-  gt: DateTime
-  gte: DateTime
-  not: DateTimeNullableFilter
-}
-
 input UserOrderByInput {
   id: OrderDirection
   name: OrderDirection
   email: OrderDirection
-  role: OrderDirection
-  createdAt: OrderDirection
 }
 
 enum OrderDirection {
@@ -153,32 +80,6 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  profileImage: ImageFieldInput
-  role: String
-  videos: VideoRelateToManyForUpdateInput
-  audios: AudioItemRelateToManyForUpdateInput
-  createdAt: DateTime
-}
-
-input ImageFieldInput {
-  upload: Upload!
-}
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
-
-input VideoRelateToManyForUpdateInput {
-  disconnect: [VideoWhereUniqueInput!]
-  set: [VideoWhereUniqueInput!]
-  create: [VideoCreateInput!]
-  connect: [VideoWhereUniqueInput!]
-}
-
-input AudioItemRelateToManyForUpdateInput {
-  disconnect: [AudioItemWhereUniqueInput!]
-  set: [AudioItemWhereUniqueInput!]
-  create: [AudioItemCreateInput!]
-  connect: [AudioItemWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -190,21 +91,6 @@ input UserCreateInput {
   name: String
   email: String
   password: String
-  profileImage: ImageFieldInput
-  role: String
-  videos: VideoRelateToManyForCreateInput
-  audios: AudioItemRelateToManyForCreateInput
-  createdAt: DateTime
-}
-
-input VideoRelateToManyForCreateInput {
-  create: [VideoCreateInput!]
-  connect: [VideoWhereUniqueInput!]
-}
-
-input AudioItemRelateToManyForCreateInput {
-  create: [AudioItemCreateInput!]
-  connect: [AudioItemWhereUniqueInput!]
 }
 
 type Video {
@@ -219,7 +105,7 @@ type Video {
   isPublic: Boolean
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
-  author: User
+  author: String
   createdAt: DateTime
 }
 
@@ -228,6 +114,24 @@ type FileFieldOutput {
   filesize: Int!
   url: String!
 }
+
+type ImageFieldOutput {
+  id: ID!
+  filesize: Int!
+  width: Int!
+  height: Int!
+  extension: ImageExtension!
+  url: String!
+}
+
+enum ImageExtension {
+  jpg
+  png
+  webp
+  gif
+}
+
+scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
 
 input VideoWhereUniqueInput {
   id: ID
@@ -245,8 +149,22 @@ input VideoWhereInput {
   embedCode: StringFilter
   isPublic: BooleanFilter
   categories: CategoryManyRelationFilter
-  author: UserWhereInput
+  author: StringFilter
   createdAt: DateTimeNullableFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: StringNullableFilter
 }
 
 input BooleanFilter {
@@ -260,6 +178,17 @@ input CategoryManyRelationFilter {
   none: CategoryWhereInput
 }
 
+input DateTimeNullableFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: DateTimeNullableFilter
+}
+
 input VideoOrderByInput {
   id: OrderDirection
   title: OrderDirection
@@ -268,6 +197,7 @@ input VideoOrderByInput {
   youtubeUrl: OrderDirection
   embedCode: OrderDirection
   isPublic: OrderDirection
+  author: OrderDirection
   createdAt: OrderDirection
 }
 
@@ -281,11 +211,18 @@ input VideoUpdateInput {
   thumbnail: ImageFieldInput
   isPublic: Boolean
   categories: CategoryRelateToManyForUpdateInput
-  author: UserRelateToOneForUpdateInput
+  author: String
   createdAt: DateTime
 }
 
 input FileFieldInput {
+  upload: Upload!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input ImageFieldInput {
   upload: Upload!
 }
 
@@ -294,12 +231,6 @@ input CategoryRelateToManyForUpdateInput {
   set: [CategoryWhereUniqueInput!]
   create: [CategoryCreateInput!]
   connect: [CategoryWhereUniqueInput!]
-}
-
-input UserRelateToOneForUpdateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
-  disconnect: Boolean
 }
 
 input VideoUpdateArgs {
@@ -317,18 +248,13 @@ input VideoCreateInput {
   thumbnail: ImageFieldInput
   isPublic: Boolean
   categories: CategoryRelateToManyForCreateInput
-  author: UserRelateToOneForCreateInput
+  author: String
   createdAt: DateTime
 }
 
 input CategoryRelateToManyForCreateInput {
   create: [CategoryCreateInput!]
   connect: [CategoryWhereUniqueInput!]
-}
-
-input UserRelateToOneForCreateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
 }
 
 type Ad {
@@ -387,7 +313,6 @@ input AdCreateInput {
 type Category {
   id: ID!
   name: String
-  description: String
   videos(where: VideoWhereInput! = {}, orderBy: [VideoOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: VideoWhereUniqueInput): [Video!]
   videosCount(where: VideoWhereInput! = {}): Int
 }
@@ -402,20 +327,30 @@ input CategoryWhereInput {
   NOT: [CategoryWhereInput!]
   id: IDFilter
   name: StringFilter
-  description: StringFilter
   videos: VideoManyRelationFilter
+}
+
+input VideoManyRelationFilter {
+  every: VideoWhereInput
+  some: VideoWhereInput
+  none: VideoWhereInput
 }
 
 input CategoryOrderByInput {
   id: OrderDirection
   name: OrderDirection
-  description: OrderDirection
 }
 
 input CategoryUpdateInput {
   name: String
-  description: String
   videos: VideoRelateToManyForUpdateInput
+}
+
+input VideoRelateToManyForUpdateInput {
+  disconnect: [VideoWhereUniqueInput!]
+  set: [VideoWhereUniqueInput!]
+  create: [VideoCreateInput!]
+  connect: [VideoWhereUniqueInput!]
 }
 
 input CategoryUpdateArgs {
@@ -425,88 +360,12 @@ input CategoryUpdateArgs {
 
 input CategoryCreateInput {
   name: String
-  description: String
   videos: VideoRelateToManyForCreateInput
 }
 
-type AudioItem {
-  id: ID!
-  title: String
-  description: String
-  sourceType: String
-  audioUrl: String
-  uploadedFile: FileFieldOutput
-  coverImage: ImageFieldOutput
-  isPublic: Boolean
-  categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
-  categoriesCount(where: CategoryWhereInput! = {}): Int
-  audioType: String
-  author: User
-  createdAt: DateTime
-}
-
-input AudioItemWhereUniqueInput {
-  id: ID
-}
-
-input AudioItemWhereInput {
-  AND: [AudioItemWhereInput!]
-  OR: [AudioItemWhereInput!]
-  NOT: [AudioItemWhereInput!]
-  id: IDFilter
-  title: StringFilter
-  description: StringFilter
-  sourceType: StringNullableFilter
-  audioUrl: StringFilter
-  isPublic: BooleanFilter
-  categories: CategoryManyRelationFilter
-  audioType: StringNullableFilter
-  author: UserWhereInput
-  createdAt: DateTimeNullableFilter
-}
-
-input AudioItemOrderByInput {
-  id: OrderDirection
-  title: OrderDirection
-  description: OrderDirection
-  sourceType: OrderDirection
-  audioUrl: OrderDirection
-  isPublic: OrderDirection
-  audioType: OrderDirection
-  createdAt: OrderDirection
-}
-
-input AudioItemUpdateInput {
-  title: String
-  description: String
-  sourceType: String
-  audioUrl: String
-  uploadedFile: FileFieldInput
-  coverImage: ImageFieldInput
-  isPublic: Boolean
-  categories: CategoryRelateToManyForUpdateInput
-  audioType: String
-  author: UserRelateToOneForUpdateInput
-  createdAt: DateTime
-}
-
-input AudioItemUpdateArgs {
-  where: AudioItemWhereUniqueInput!
-  data: AudioItemUpdateInput!
-}
-
-input AudioItemCreateInput {
-  title: String
-  description: String
-  sourceType: String
-  audioUrl: String
-  uploadedFile: FileFieldInput
-  coverImage: ImageFieldInput
-  isPublic: Boolean
-  categories: CategoryRelateToManyForCreateInput
-  audioType: String
-  author: UserRelateToOneForCreateInput
-  createdAt: DateTime
+input VideoRelateToManyForCreateInput {
+  create: [VideoCreateInput!]
+  connect: [VideoWhereUniqueInput!]
 }
 
 """
@@ -539,12 +398,6 @@ type Mutation {
   updateCategories(data: [CategoryUpdateArgs!]!): [Category]
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteCategories(where: [CategoryWhereUniqueInput!]!): [Category]
-  createAudioItem(data: AudioItemCreateInput!): AudioItem
-  createAudioItems(data: [AudioItemCreateInput!]!): [AudioItem]
-  updateAudioItem(where: AudioItemWhereUniqueInput!, data: AudioItemUpdateInput!): AudioItem
-  updateAudioItems(data: [AudioItemUpdateArgs!]!): [AudioItem]
-  deleteAudioItem(where: AudioItemWhereUniqueInput!): AudioItem
-  deleteAudioItems(where: [AudioItemWhereUniqueInput!]!): [AudioItem]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
 }
@@ -573,9 +426,6 @@ type Query {
   category(where: CategoryWhereUniqueInput!): Category
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
-  audioItem(where: AudioItemWhereUniqueInput!): AudioItem
-  audioItems(where: AudioItemWhereInput! = {}, orderBy: [AudioItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: AudioItemWhereUniqueInput): [AudioItem!]
-  audioItemsCount(where: AudioItemWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
