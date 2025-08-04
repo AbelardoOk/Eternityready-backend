@@ -315,6 +315,8 @@ type Category {
   name: String
   videos(where: VideoWhereInput! = {}, orderBy: [VideoOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: VideoWhereUniqueInput): [Video!]
   videosCount(where: VideoWhereInput! = {}): Int
+  instagram(where: InstagramWhereInput! = {}, orderBy: [InstagramOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: InstagramWhereUniqueInput): [Instagram!]
+  instagramCount(where: InstagramWhereInput! = {}): Int
 }
 
 input CategoryWhereUniqueInput {
@@ -328,12 +330,19 @@ input CategoryWhereInput {
   id: IDFilter
   name: StringFilter
   videos: VideoManyRelationFilter
+  instagram: InstagramManyRelationFilter
 }
 
 input VideoManyRelationFilter {
   every: VideoWhereInput
   some: VideoWhereInput
   none: VideoWhereInput
+}
+
+input InstagramManyRelationFilter {
+  every: InstagramWhereInput
+  some: InstagramWhereInput
+  none: InstagramWhereInput
 }
 
 input CategoryOrderByInput {
@@ -344,6 +353,7 @@ input CategoryOrderByInput {
 input CategoryUpdateInput {
   name: String
   videos: VideoRelateToManyForUpdateInput
+  instagram: InstagramRelateToManyForUpdateInput
 }
 
 input VideoRelateToManyForUpdateInput {
@@ -351,6 +361,13 @@ input VideoRelateToManyForUpdateInput {
   set: [VideoWhereUniqueInput!]
   create: [VideoCreateInput!]
   connect: [VideoWhereUniqueInput!]
+}
+
+input InstagramRelateToManyForUpdateInput {
+  disconnect: [InstagramWhereUniqueInput!]
+  set: [InstagramWhereUniqueInput!]
+  create: [InstagramCreateInput!]
+  connect: [InstagramWhereUniqueInput!]
 }
 
 input CategoryUpdateArgs {
@@ -361,11 +378,82 @@ input CategoryUpdateArgs {
 input CategoryCreateInput {
   name: String
   videos: VideoRelateToManyForCreateInput
+  instagram: InstagramRelateToManyForCreateInput
 }
 
 input VideoRelateToManyForCreateInput {
   create: [VideoCreateInput!]
   connect: [VideoWhereUniqueInput!]
+}
+
+input InstagramRelateToManyForCreateInput {
+  create: [InstagramCreateInput!]
+  connect: [InstagramWhereUniqueInput!]
+}
+
+type Instagram {
+  id: ID!
+  description: String
+  url: String
+  embedCode: String
+  isPublic: Boolean
+  categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
+  categoriesCount(where: CategoryWhereInput! = {}): Int
+  author: String
+  createdAt: DateTime
+}
+
+input InstagramWhereUniqueInput {
+  id: ID
+}
+
+input InstagramWhereInput {
+  AND: [InstagramWhereInput!]
+  OR: [InstagramWhereInput!]
+  NOT: [InstagramWhereInput!]
+  id: IDFilter
+  description: StringNullableFilter
+  url: StringFilter
+  embedCode: StringNullableFilter
+  isPublic: BooleanFilter
+  categories: CategoryManyRelationFilter
+  author: StringFilter
+  createdAt: DateTimeNullableFilter
+}
+
+input InstagramOrderByInput {
+  id: OrderDirection
+  description: OrderDirection
+  url: OrderDirection
+  embedCode: OrderDirection
+  isPublic: OrderDirection
+  author: OrderDirection
+  createdAt: OrderDirection
+}
+
+input InstagramUpdateInput {
+  description: String
+  url: String
+  embedCode: String
+  isPublic: Boolean
+  categories: CategoryRelateToManyForUpdateInput
+  author: String
+  createdAt: DateTime
+}
+
+input InstagramUpdateArgs {
+  where: InstagramWhereUniqueInput!
+  data: InstagramUpdateInput!
+}
+
+input InstagramCreateInput {
+  description: String
+  url: String
+  embedCode: String
+  isPublic: Boolean
+  categories: CategoryRelateToManyForCreateInput
+  author: String
+  createdAt: DateTime
 }
 
 """
@@ -398,6 +486,12 @@ type Mutation {
   updateCategories(data: [CategoryUpdateArgs!]!): [Category]
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteCategories(where: [CategoryWhereUniqueInput!]!): [Category]
+  createInstagram(data: InstagramCreateInput!): Instagram
+  createInstagrams(data: [InstagramCreateInput!]!): [Instagram]
+  updateInstagram(where: InstagramWhereUniqueInput!, data: InstagramUpdateInput!): Instagram
+  updateInstagrams(data: [InstagramUpdateArgs!]!): [Instagram]
+  deleteInstagram(where: InstagramWhereUniqueInput!): Instagram
+  deleteInstagrams(where: [InstagramWhereUniqueInput!]!): [Instagram]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
 }
@@ -426,6 +520,9 @@ type Query {
   category(where: CategoryWhereUniqueInput!): Category
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
+  instagram(where: InstagramWhereUniqueInput!): Instagram
+  instagrams(where: InstagramWhereInput! = {}, orderBy: [InstagramOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: InstagramWhereUniqueInput): [Instagram!]
+  instagramsCount(where: InstagramWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

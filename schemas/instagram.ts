@@ -10,7 +10,7 @@ import {
 } from "@keystone-6/core/fields";
 import { allowAll } from "@keystone-6/core/access";
 
-export const Video = list({
+export const Instagram = list({
   access: {
     operation: {
       query: allowAll,
@@ -26,28 +26,24 @@ export const Video = list({
     },
   },
   fields: {
-    title: text({ validation: { isRequired: true } }),
-    description: text({ ui: { displayMode: "textarea" } }),
-    sourceType: select({
-      options: [
-        { label: "YouTube", value: "youtube" },
-        { label: "Embed", value: "embed" },
-        { label: "Upload Direto", value: "upload" },
-      ],
-      defaultValue: "youtube",
-      ui: { displayMode: "segmented-control" },
+    description: text({
+      ui: { displayMode: "textarea" },
+      db: { nativeType: "Text", isNullable: true },
+      validation: { isRequired: false },
     }),
-    youtubeUrl: text({
-      ui: { description: "URL from youtube video" },
+    url: text({
+      ui: { description: "Instagram URL Post" },
     }),
     embedCode: text({
-      ui: { displayMode: "textarea", description: "<iframe> code" },
+      ui: {
+        displayMode: "textarea",
+        description: "<iframe> code from instagram",
+      },
+      db: { nativeType: "Text", isNullable: true },
+      validation: { isRequired: false },
     }),
-    uploadedFile: file({ storage: "video_files" }),
-    thumbnail: image({ storage: "thumbnails" }),
     isPublic: checkbox({ defaultValue: true, label: "Public" }),
-    categories: relationship({ ref: "Category.videos", many: true }),
-    // author: relationship({ ref: "User.videos" }),
+    categories: relationship({ ref: "Category.instagram", many: true }),
     author: text({ validation: { isRequired: true } }),
     createdAt: timestamp({ defaultValue: { kind: "now" } }),
   },

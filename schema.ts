@@ -5,6 +5,7 @@ import { Video } from "./schemas/video";
 import { Ad } from "./schemas/ad";
 import { Category } from "./schemas/category";
 import { list } from "@keystone-6/core";
+import { Instagram } from "./schemas/instagram";
 import { text, password, timestamp } from "@keystone-6/core/fields";
 import { allowAll } from "@keystone-6/core/access";
 
@@ -33,4 +34,5 @@ export const lists = {
   Video,
   Ad,
   Category,
+  Instagram,
 } satisfies Lists;

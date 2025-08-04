@@ -52,7 +52,19 @@ model Ad {
 }
 
 model Category {
-  id     String  @id @default(cuid())
-  name   String  @default("")
-  videos Video[] @relation("Category_videos")
+  id        String      @id @default(cuid())
+  name      String      @default("")
+  videos    Video[]     @relation("Category_videos")
+  instagram Instagram[] @relation("Category_instagram")
+}
+
+model Instagram {
+  id          String     @id @default(cuid())
+  description String?    @mysql.Text
+  url         String     @default("")
+  embedCode   String?    @mysql.Text
+  isPublic    Boolean    @default(true)
+  categories  Category[] @relation("Category_instagram")
+  author      String     @default("")
+  createdAt   DateTime?  @default(now())
 }

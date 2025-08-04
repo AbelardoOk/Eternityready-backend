@@ -14,6 +14,7 @@ import { config as dotenvConfig } from "dotenv";
 import { withAuth, session } from "./auth";
 import { searchHandler } from "./api/videos";
 import { categoryHandler } from "./api/categories";
+import { postSearchHandler } from "./api/instagram";
 
 dotenvConfig();
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -121,6 +122,10 @@ export default withAuth.withAuth(
 
         app.get("/api/categories", async (req: Request, res: Response) => {
           await categoryHandler(req, res, context);
+        });
+
+        app.get("/api/instagram", async (req: Request, res: Response) => {
+          await postSearchHandler(req, res, context);
         });
       },
     },
