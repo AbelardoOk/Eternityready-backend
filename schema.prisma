@@ -21,10 +21,11 @@ model User {
 model Video {
   id                    String     @id @default(cuid())
   title                 String     @default("")
-  description           String     @default("")
+  description           String?    @mysql.Text
   sourceType            String?    @default("youtube")
-  youtubeUrl            String     @default("")
-  embedCode             String     @default("")
+  youtubeUrl            String?    @mysql.Text
+  videoId               String     @unique @default("")
+  embedCode             String?    @mysql.Text
   uploadedFile_filesize Int?
   uploadedFile_filename String?
   thumbnail_id          String?

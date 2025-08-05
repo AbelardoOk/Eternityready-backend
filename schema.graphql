@@ -99,6 +99,7 @@ type Video {
   description: String
   sourceType: String
   youtubeUrl: String
+  videoId: String
   embedCode: String
   uploadedFile: FileFieldOutput
   thumbnail: ImageFieldOutput
@@ -135,6 +136,7 @@ scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339
 
 input VideoWhereUniqueInput {
   id: ID
+  videoId: String
 }
 
 input VideoWhereInput {
@@ -143,10 +145,11 @@ input VideoWhereInput {
   NOT: [VideoWhereInput!]
   id: IDFilter
   title: StringFilter
-  description: StringFilter
+  description: StringNullableFilter
   sourceType: StringNullableFilter
-  youtubeUrl: StringFilter
-  embedCode: StringFilter
+  youtubeUrl: StringNullableFilter
+  videoId: StringFilter
+  embedCode: StringNullableFilter
   isPublic: BooleanFilter
   categories: CategoryManyRelationFilter
   author: StringFilter
@@ -195,6 +198,7 @@ input VideoOrderByInput {
   description: OrderDirection
   sourceType: OrderDirection
   youtubeUrl: OrderDirection
+  videoId: OrderDirection
   embedCode: OrderDirection
   isPublic: OrderDirection
   author: OrderDirection
@@ -206,6 +210,7 @@ input VideoUpdateInput {
   description: String
   sourceType: String
   youtubeUrl: String
+  videoId: String
   embedCode: String
   uploadedFile: FileFieldInput
   thumbnail: ImageFieldInput
@@ -243,6 +248,7 @@ input VideoCreateInput {
   description: String
   sourceType: String
   youtubeUrl: String
+  videoId: String
   embedCode: String
   uploadedFile: FileFieldInput
   thumbnail: ImageFieldInput

@@ -11,9 +11,12 @@
     "@keystone-6/auth": "^8.0.0",
     "@keystone-6/core": "^6.0.0",
     "@keystone-6/fields-document": "^9.0.0",
+    "axios": "^1.11.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
+    "path": "^0.12.7",
     "typescript": "^5.5.0",
+    "uuid": "^11.1.0",
     "zod": "^4.0.14"
   },
   "devDependencies": {
