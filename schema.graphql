@@ -95,19 +95,19 @@ input UserCreateInput {
 
 type Video {
   id: ID!
-  title: String
-  description: String
   sourceType: String
   youtubeUrl: String
-  videoId: String
   embedCode: String
   uploadedFile: FileFieldOutput
+  title: String
+  description: String
   thumbnail: ImageFieldOutput
+  author: String
+  videoId: String
+  createdAt: DateTime
   isPublic: Boolean
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
-  author: String
-  createdAt: DateTime
 }
 
 type FileFieldOutput {
@@ -144,16 +144,16 @@ input VideoWhereInput {
   OR: [VideoWhereInput!]
   NOT: [VideoWhereInput!]
   id: IDFilter
+  sourceType: StringNullableFilter
+  youtubeUrl: StringFilter
+  embedCode: StringNullableFilter
   title: StringFilter
   description: StringNullableFilter
-  sourceType: StringNullableFilter
-  youtubeUrl: StringNullableFilter
+  author: StringFilter
   videoId: StringFilter
-  embedCode: StringNullableFilter
+  createdAt: DateTimeNullableFilter
   isPublic: BooleanFilter
   categories: CategoryManyRelationFilter
-  author: StringFilter
-  createdAt: DateTimeNullableFilter
 }
 
 input StringNullableFilter {
@@ -170,17 +170,6 @@ input StringNullableFilter {
   not: StringNullableFilter
 }
 
-input BooleanFilter {
-  equals: Boolean
-  not: BooleanFilter
-}
-
-input CategoryManyRelationFilter {
-  every: CategoryWhereInput
-  some: CategoryWhereInput
-  none: CategoryWhereInput
-}
-
 input DateTimeNullableFilter {
   equals: DateTime
   in: [DateTime!]
@@ -192,32 +181,43 @@ input DateTimeNullableFilter {
   not: DateTimeNullableFilter
 }
 
+input BooleanFilter {
+  equals: Boolean
+  not: BooleanFilter
+}
+
+input CategoryManyRelationFilter {
+  every: CategoryWhereInput
+  some: CategoryWhereInput
+  none: CategoryWhereInput
+}
+
 input VideoOrderByInput {
   id: OrderDirection
-  title: OrderDirection
-  description: OrderDirection
   sourceType: OrderDirection
   youtubeUrl: OrderDirection
-  videoId: OrderDirection
   embedCode: OrderDirection
-  isPublic: OrderDirection
+  title: OrderDirection
+  description: OrderDirection
   author: OrderDirection
+  videoId: OrderDirection
   createdAt: OrderDirection
+  isPublic: OrderDirection
 }
 
 input VideoUpdateInput {
-  title: String
-  description: String
   sourceType: String
   youtubeUrl: String
-  videoId: String
   embedCode: String
   uploadedFile: FileFieldInput
+  title: String
+  description: String
   thumbnail: ImageFieldInput
+  author: String
+  videoId: String
+  createdAt: DateTime
   isPublic: Boolean
   categories: CategoryRelateToManyForUpdateInput
-  author: String
-  createdAt: DateTime
 }
 
 input FileFieldInput {
@@ -244,18 +244,18 @@ input VideoUpdateArgs {
 }
 
 input VideoCreateInput {
-  title: String
-  description: String
   sourceType: String
   youtubeUrl: String
-  videoId: String
   embedCode: String
   uploadedFile: FileFieldInput
+  title: String
+  description: String
   thumbnail: ImageFieldInput
+  author: String
+  videoId: String
+  createdAt: DateTime
   isPublic: Boolean
   categories: CategoryRelateToManyForCreateInput
-  author: String
-  createdAt: DateTime
 }
 
 input CategoryRelateToManyForCreateInput {

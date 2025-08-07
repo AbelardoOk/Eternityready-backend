@@ -20,23 +20,23 @@ model User {
 
 model Video {
   id                    String     @id @default(cuid())
-  title                 String     @default("")
-  description           String?    @mysql.Text
   sourceType            String?    @default("youtube")
-  youtubeUrl            String?    @mysql.Text
-  videoId               String     @unique @default("")
+  youtubeUrl            String     @default("")
   embedCode             String?    @mysql.Text
   uploadedFile_filesize Int?
   uploadedFile_filename String?
+  title                 String     @default("")
+  description           String?    @mysql.Text
   thumbnail_id          String?
   thumbnail_filesize    Int?
   thumbnail_width       Int?
   thumbnail_height      Int?
   thumbnail_extension   String?
+  author                String     @default("")
+  videoId               String     @unique @default("")
+  createdAt             DateTime?  @default(now())
   isPublic              Boolean    @default(true)
   categories            Category[] @relation("Category_videos")
-  author                String     @default("")
-  createdAt             DateTime?  @default(now())
 }
 
 model Ad {
