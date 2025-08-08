@@ -6,11 +6,14 @@ type User {
   name: String
   email: String
   password: PasswordState
+  createdAt: DateTime
 }
 
 type PasswordState {
   isSet: Boolean!
 }
+
+scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
 
 input UserWhereUniqueInput {
   id: ID
@@ -24,6 +27,7 @@ input UserWhereInput {
   id: IDFilter
   name: StringFilter
   email: StringFilter
+  createdAt: DateTimeNullableFilter
 }
 
 input IDFilter {
@@ -65,10 +69,22 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
+input DateTimeNullableFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: DateTimeNullableFilter
+}
+
 input UserOrderByInput {
   id: OrderDirection
   name: OrderDirection
   email: OrderDirection
+  createdAt: OrderDirection
 }
 
 enum OrderDirection {
@@ -80,6 +96,7 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
+  createdAt: DateTime
 }
 
 input UserUpdateArgs {
@@ -91,6 +108,7 @@ input UserCreateInput {
   name: String
   email: String
   password: String
+  createdAt: DateTime
 }
 
 type Video {
@@ -132,8 +150,6 @@ enum ImageExtension {
   gif
 }
 
-scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
-
 input VideoWhereUniqueInput {
   id: ID
   videoId: String
@@ -168,17 +184,6 @@ input StringNullableFilter {
   startsWith: String
   endsWith: String
   not: StringNullableFilter
-}
-
-input DateTimeNullableFilter {
-  equals: DateTime
-  in: [DateTime!]
-  notIn: [DateTime!]
-  lt: DateTime
-  lte: DateTime
-  gt: DateTime
-  gte: DateTime
-  not: DateTimeNullableFilter
 }
 
 input BooleanFilter {
@@ -500,6 +505,7 @@ type Mutation {
   deleteInstagrams(where: [InstagramWhereUniqueInput!]!): [Instagram]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
+  createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
 }
 
 union UserAuthenticationWithPasswordResult = UserAuthenticationWithPasswordSuccess | UserAuthenticationWithPasswordFailure
@@ -511,6 +517,12 @@ type UserAuthenticationWithPasswordSuccess {
 
 type UserAuthenticationWithPasswordFailure {
   message: String!
+}
+
+input CreateInitialUserInput {
+  name: String
+  email: String
+  password: String
 }
 
 type Query {

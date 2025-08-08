@@ -21,14 +21,18 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
   : ["http://localhost:3000", "https://eternityready.com"];
 
-export default withAuth.withAuth(
+export default withAuth(
   config({
     db: {
       provider: "mysql",
       url: process.env.DATABASE_URL!,
       onConnect: async (context) => {
-        if ((await context.db.User.count()) === 0) {
-          console.log("No users found. Create the first one at Admin UI");
+        try {
+          if ((await context.db.User.count()) === 0) {
+            console.log("No users found. Create the first one at Admin UI");
+          }
+        } catch (err) {
+          console.error("Error connecting to database:", err);
         }
       },
     },
