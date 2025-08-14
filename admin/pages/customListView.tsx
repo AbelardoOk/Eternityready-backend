@@ -29,6 +29,8 @@ type VideoItem = {
   thumbnail: {
     url: string;
   } | null;
+  isPublic: boolean;
+  isRestricted: boolean;
 };
 
 type VerificationStatus = {
@@ -45,29 +47,18 @@ const sourceTypeTones = {
   embed: "gray",
 };
 
-const StatusCircle = ({ status }: { status?: VerificationStatus }) => {
-  if (!status) return null; // Não renderiza nada se o vídeo não foi verificado
-  if (status.isLoading) {
-    // Adiciona um feedback visual de carregamento
-    return (
-      <Pill color="blue" weight="light">
-        Verificando...
-      </Pill>
-    );
-  }
-
-  const { isPublic, isRestricted, message } = status;
+const StatusCircle = ({ video }: { video: VideoItem }) => {
+  const { isPublic, isRestricted } = video;
 
   const problems = (!isPublic ? 1 : 0) + (isRestricted ? 1 : 0);
   let background;
 
   if (problems === 0) {
-    background = "#22c55e"; // Totalmente verde
+    background = "#22c55e";
   } else if (problems === 1) {
-    // Metade vermelho, metade verde
     background = "conic-gradient(#ef4444 0 50%, #22c55e 50% 100%)";
   } else {
-    background = "#ef4444"; // Totalmente vermelho
+    background = "#ef4444";
   }
 
   const circleStyle = {
@@ -79,6 +70,12 @@ const StatusCircle = ({ status }: { status?: VerificationStatus }) => {
     cursor: "pointer",
     marginTop: "5px",
   };
+
+  const message = !isPublic
+    ? "Vídeo não público"
+    : isRestricted
+    ? "Vídeo restrito"
+    : "Vídeo público";
 
   return (
     <Tooltip content={<span>{message}</span>}>
@@ -96,7 +93,6 @@ export default function PaginaListaVideosCustomizada() {
   const [isVerifyHover, setIsVerifyHover] = useState(false);
 
   const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
-  const [isOpen, setIsOpen] = useState(false);
 
   const [verificationStatus, setVerificationStatus] = useState<
     Record<string, VerificationStatus>
@@ -123,6 +119,8 @@ export default function PaginaListaVideosCustomizada() {
             thumbnail {
               url
             }
+            isPublic
+            isRestricted
           }
         }
       `;
@@ -548,7 +546,7 @@ export default function PaginaListaVideosCustomizada() {
             </Pill>
           </CellContainer>
           <CellContainer>
-            <StatusCircle status={verificationStatus[video.id]} />
+            <StatusCircle video={video} />
           </CellContainer>
         </Box>
       ))}

@@ -213,15 +213,6 @@ export const Video = list({
         itemView: { fieldMode: "read" },
       },
     }),
-    verificationMessage: text({
-      ui: {
-        description: "Message returned by automatic video verification.",
-        displayMode: "textarea",
-        createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
-      },
-      db: { nativeType: "Text", isNullable: true },
-    }),
   },
 
   ui: {

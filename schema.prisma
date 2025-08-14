@@ -39,7 +39,6 @@ model Video {
   isPublic              Boolean    @default(true)
   categories            Category[] @relation("Category_videos")
   isRestricted          Boolean    @default(false)
-  verificationMessage   String?    @mysql.Text
 }
 
 model Ad {
