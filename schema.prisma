@@ -36,7 +36,7 @@ model Video {
   author                String     @default("")
   videoId               String     @unique @default("")
   createdAt             DateTime?  @default(now())
-  isPublic              Boolean    @default(true)
+  isPublic              Boolean    @default(false)
   categories            Category[] @relation("Category_videos")
   isRestricted          Boolean    @default(false)
 }

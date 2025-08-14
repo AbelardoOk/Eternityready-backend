@@ -204,7 +204,7 @@ export const Video = list({
       },
     }),
     isRestricted: checkbox({
-      defaultValue: false,
+      defaultValue: undefined,
       label: "Restricted",
       ui: {
         description:

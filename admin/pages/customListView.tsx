@@ -72,10 +72,10 @@ const StatusCircle = ({ video }: { video: VideoItem }) => {
   };
 
   const message = !isPublic
-    ? "Vídeo não público"
+    ? "Video not public"
     : isRestricted
-    ? "Vídeo restrito"
-    : "Vídeo público";
+    ? "Video restricted"
+    : "Video public";
 
   return (
     <Tooltip content={<span>{message}</span>}>
@@ -481,6 +481,7 @@ export default function PaginaListaVideosCustomizada() {
             backgroundColor: "var(--ks-color-foreground)",
           }}
           onChange={toggleSelectAll}
+          children={undefined}
         ></Checkbox>
 
         <CellContainer>Thumb</CellContainer>
@@ -504,11 +505,6 @@ export default function PaginaListaVideosCustomizada() {
             backgroundColor: selectedVideos.includes(video.id)
               ? "var(--ks-color-background-selected)" // Cor de fundo para item selecionado
               : "transparent",
-            ":hover": {
-              backgroundColor: selectedVideos.includes(video.id)
-                ? "var(--ks-color-background-selected)"
-                : "var(--ks-color-background-hover)",
-            },
           }}
         >
           {/* NOVO: Coluna do Checkbox individual */}
