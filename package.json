@@ -8,9 +8,10 @@
     "build": "keystone build"
   },
   "dependencies": {
-    "@keystone-6/auth": "^8.0.0",
+    "@keystone-6/auth": "^8.1.0",
     "@keystone-6/core": "^6.0.0",
     "@keystone-6/fields-document": "^9.0.0",
+    "@keystone-ui/popover": "^6.0.2",
     "axios": "^1.11.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",

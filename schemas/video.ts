@@ -7,11 +7,11 @@ import {
   checkbox,
   file,
   image,
-  virtual,
   select,
 } from "@keystone-6/core/fields";
 import { allowAll } from "@keystone-6/core/access";
 import axios from "axios";
+import { verifyVideosHandler } from "../api/sync";
 
 function getYouTubeVideoId(url: string): string | null {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -203,6 +203,31 @@ export const Video = list({
         description: "Categories associated with this video.",
       },
     }),
+    isRestricted: checkbox({
+      defaultValue: false,
+      label: "Restricted",
+      ui: {
+        description:
+          "Indicates whether the video has automatically detected restrictions..",
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+    }),
+    verificationMessage: text({
+      ui: {
+        description: "Message returned by automatic video verification.",
+        displayMode: "textarea",
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+      db: { nativeType: "Text", isNullable: true },
+    }),
+  },
+
+  ui: {
+    listView: {
+      initialColumns: ["thumbnail", "title", "author", "isPublic"],
+    },
   },
 
   hooks: {

@@ -15,6 +15,7 @@ import { withAuth, session } from "./auth";
 import { searchHandler } from "./api/videos";
 import { categoryHandler } from "./api/categories";
 import { postSearchHandler } from "./api/instagram";
+import { verifyVideosHandler } from "./api/sync";
 
 dotenvConfig();
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -76,6 +77,7 @@ export default withAuth(
         storagePath: "public/ads",
       },
     },
+
     server: {
       extendExpressApp: (app, context) => {
         app.use(
@@ -130,6 +132,10 @@ export default withAuth(
 
         app.get("/api/instagram", async (req: Request, res: Response) => {
           await postSearchHandler(req, res, context);
+        });
+
+        app.post("/api/verifyVideo", async (req: Request, res: Response) => {
+          await verifyVideosHandler(req, res, context);
         });
       },
     },
