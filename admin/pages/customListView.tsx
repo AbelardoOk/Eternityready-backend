@@ -75,7 +75,7 @@ const StatusCircle = ({ video }: { video: VideoItem }) => {
     ? "Video not public"
     : isRestricted
     ? "Video restricted"
-    : "Video public";
+    : "Video public and not geo restricted";
 
   return (
     <Tooltip content={<span>{message}</span>}>
@@ -146,6 +146,24 @@ export default function PaginaListaVideosCustomizada() {
     fetchData();
   }, []);
 
+  const filteredItems = React.useMemo(() => {
+    let filteredVideos = [...videos];
+
+    if (searchTerm) {
+      filteredVideos = filteredVideos.filter((video) =>
+        video.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filters.isYoutube) {
+      filteredVideos = filteredVideos.filter(
+        (video) => video.sourceType === "youtube"
+      );
+    }
+
+    return filteredVideos;
+  }, [videos, searchTerm, filters]);
+
   // NOVO: Funções para gerenciar a seleção
   const toggleSelection = (videoId: string) => {
     setSelectedVideos((currentSelection) => {
@@ -160,12 +178,28 @@ export default function PaginaListaVideosCustomizada() {
   };
 
   const toggleSelectAll = () => {
-    if (selectedVideos.length === videos.length) {
-      setSelectedVideos([]);
+    const filteredVideoIds = filteredItems.map((v) => v.id);
+    const allFilteredSelected = filteredVideoIds.every((id) =>
+      selectedVideos.includes(id)
+    );
+
+    if (allFilteredSelected && filteredVideoIds.length > 0) {
+      setSelectedVideos((current) =>
+        current.filter((id) => !filteredVideoIds.includes(id))
+      );
     } else {
-      setSelectedVideos(videos.map((v) => v.id));
+      setSelectedVideos((current) => [
+        ...new Set([...current, ...filteredVideoIds]),
+      ]);
     }
   };
+
+  const allFilteredSelected =
+    filteredItems.length > 0 &&
+    filteredItems.every((v) => selectedVideos.includes(v.id));
+  const someFilteredSelected =
+    filteredItems.some((v) => selectedVideos.includes(v.id)) &&
+    !allFilteredSelected;
 
   const allSelected =
     selectedVideos.length === videos.length && videos.length > 0;
@@ -300,7 +334,7 @@ export default function PaginaListaVideosCustomizada() {
             e.preventDefault();
             console.log(`Pesquisando por: ${searchTerm}`);
           }}
-          style={{ flex: 1, minWidth: 320 }}
+          style={{ flex: 1 }}
         >
           <TextInput
             placeholder="Search by name"
@@ -323,7 +357,7 @@ export default function PaginaListaVideosCustomizada() {
               borderRadius: "4px",
             }}
           >
-            Create Vídeo
+            Create
           </button>
         </Link>
 
@@ -345,7 +379,7 @@ export default function PaginaListaVideosCustomizada() {
                 borderRadius: "6px",
               }}
             >
-              Filtrar Lista
+              Filters
               <ChevronDownIcon size="small" style={{ marginLeft: "8px" }} />
             </button>
           )}
@@ -392,12 +426,12 @@ export default function PaginaListaVideosCustomizada() {
             <>
               Selected{" "}
               <strong>
-                {selectedVideos.length} of {selectedVideos.length}
+                {selectedVideos.length} of {videos.length}
               </strong>
             </>
           ) : (
             <>
-              Showing <strong>{videos.length} Video</strong>
+              Showing <strong>{filteredItems.length} Video</strong>
             </>
           )}
         </text>
@@ -470,7 +504,8 @@ export default function PaginaListaVideosCustomizada() {
       >
         {/* O Box abaixo é o wrapper que corrige o erro de tipo */}
         <Checkbox
-          checked={allSelected}
+          checked={allFilteredSelected}
+          ref={selectAllCheckboxRef}
           style={{
             // Propriedade para o estado indeterminado
             appearance: someSelected ? "auto" : undefined,
@@ -492,7 +527,7 @@ export default function PaginaListaVideosCustomizada() {
       </Box>
 
       {/* Corpo da Lista ATUALIZADO */}
-      {videos.map((video) => (
+      {filteredItems.map((video) => (
         <Box
           key={video.id}
           style={{

@@ -10,16 +10,22 @@ export function CustomNavigation({
   lists,
   authenticatedItem,
 }: NavigationProps) {
+  const listOrder = ["Instagram", "Ad", "Category", "User"];
+  const allowedLists = lists
+    .filter((list) => listOrder.includes(list.key))
+    .sort((a, b) => listOrder.indexOf(a.key) - listOrder.indexOf(b.key));
   return (
     <NavigationContainer authenticatedItem={authenticatedItem}>
-      {/* Link para o Dashboard */}
       <NavItem href="/">Dashboard</NavItem>
-
-      {/* Links para suas listas (incluindo 'Video') */}
-      <ListNavItems lists={lists} />
-
-      {/* 👇 NOSSO LINK CUSTOMIZADO PARA A PÁGINA DE VÍDEOS 👇 */}
-      <NavItem href="/customListView">Videos (custom)</NavItem>
+      <hr
+        style={{
+          margin: "1rem 0",
+          border: "1px solid #ccc",
+          marginRight: "1.5rem",
+        }}
+      />
+      <NavItem href="/customListView">Videos</NavItem>
+      <ListNavItems lists={allowedLists} />
     </NavigationContainer>
   );
 }

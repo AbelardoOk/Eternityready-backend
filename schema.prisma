@@ -36,9 +36,10 @@ model Video {
   author                String     @default("")
   videoId               String     @unique @default("")
   createdAt             DateTime?  @default(now())
-  isPublic              Boolean    @default(false)
+  isPublic              Boolean    @default(true)
   categories            Category[] @relation("Category_videos")
   isRestricted          Boolean    @default(false)
+  verificationMessage   String     @default("")
 }
 
 model Ad {

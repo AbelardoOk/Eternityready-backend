@@ -213,6 +213,7 @@ export const Video = list({
         itemView: { fieldMode: "read" },
       },
     }),
+    verificationMessage: text({ defaultValue: "" }),
   },
 
   ui: {
