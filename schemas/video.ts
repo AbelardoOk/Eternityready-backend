@@ -33,9 +33,9 @@ async function fetchYoutubeVideoDetails(videoId: string) {
         title: snippet.title,
         description: snippet.description,
         thumbnailUrl:
-          snippet.thumbnails.default?.url ||
-          snippet.thumbnails.high?.url ||
-          snippet.thumbnails.maxres?.url,
+          snippet.thumbnails.maxres?.url ||
+          snippet.thumbnails.standard?.url ||
+          snippet.thumbnails.high?.url,
         channelTitle: snippet.channelTitle,
         createdAt: snippet.publishedAt,
         embedCode: embed,
