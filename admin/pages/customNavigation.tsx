@@ -6,7 +6,7 @@ import {
   NavigationProps,
 } from "@keystone-6/core/admin-ui/components";
 
-export function CustomNavigation({
+export default function CustomNavigation({
   lists,
   authenticatedItem,
 }: NavigationProps) {
