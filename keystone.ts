@@ -12,7 +12,7 @@ import cors from "cors";
 import { config as dotenvConfig } from "dotenv";
 
 import { withAuth, session } from "./auth";
-import { searchHandler } from "./api/videos";
+import { searchHandler, videoHandler } from "./api/videos";
 import { categoryHandler } from "./api/categories";
 import { postSearchHandler } from "./api/instagram";
 import { verifyVideosHandler } from "./api/sync";
@@ -125,6 +125,10 @@ export default withAuth(
 
         app.get("/api/search", async (req: Request, res: Response) => {
           await searchHandler(req, res, context);
+        });
+
+        app.get("/api/video/:id", async (req: Request, res: Response) => {
+          await videoHandler(req, res, context);
         });
 
         app.get("/api/categories", async (req: Request, res: Response) => {

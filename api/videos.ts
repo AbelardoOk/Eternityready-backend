@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { KeystoneContext } from "@keystone-6/core/types";
-import { z } from "zod";
+import { parse, z } from "zod";
 
 const videosQuerySchema = z.object({
   page: z
@@ -59,8 +59,9 @@ export const searchHandler = async (
       take: PAGE_SIZE,
       skip,
       orderBy: { createdAt: "desc" },
-      query: `
+      query: `  
         id
+        sourceType
         title
         description
         createdAt
@@ -76,6 +77,53 @@ export const searchHandler = async (
       page,
       totalPages: Math.ceil(totalCount / PAGE_SIZE),
       videos,
+    });
+  } catch (error) {
+    console.error("Erro ao buscar vídeos:", error);
+    return res.status(500).json({ error: "Erro interno ao buscar vídeos" });
+  }
+};
+
+export const videoHandler = async (
+  req: Request,
+  res: Response,
+  context: KeystoneContext
+) => {
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const { id: videoId } = req.params;
+  if (!videoId) {
+    return res
+      .status(400)
+      .json({ error: "The video ID is required in the URL." });
+  }
+
+  try {
+    const video = await context.query.Video.findOne({
+      where: {
+        id: videoId,
+      },
+      query: `  
+        id
+        sourceType
+        title
+        description
+        videoId
+        createdAt
+        thumbnail { url }
+        author
+        categories { id name }
+      `,
+    });
+
+    if (!video) {
+      return res.status(404).json({ error: "Video not found or not public." });
+    }
+
+    return res.status(200).json({
+      video,
     });
   } catch (error) {
     console.error("Erro ao buscar vídeos:", error);
