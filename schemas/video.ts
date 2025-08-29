@@ -1,5 +1,5 @@
 import path from "path";
-import { graphql, list } from "@keystone-6/core";
+import { list } from "@keystone-6/core";
 import {
   text,
   relationship,
@@ -11,7 +11,6 @@ import {
 } from "@keystone-6/core/fields";
 import { allowAll } from "@keystone-6/core/access";
 import axios from "axios";
-import { verifyVideosHandler } from "../api/sync";
 
 function getYouTubeVideoId(url: string): string | null {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -94,39 +93,6 @@ export const Video = list({
       },
       db: { nativeType: "Text", isNullable: true },
     }),
-    //     type: graphql.String,
-    //     resolve: (item) => {
-    //       // Retorna o valor salvo, ou o valor inicial se estiver criando
-    //       return (
-    //         item.detalhes || {
-    //           sourceType: "youtube",
-    //           title: "",
-    //           description: "",
-    //         }
-    //       );
-    //     },
-    //   }),
-    //   ui: {
-    //     views: "./admin/components/videoDetails.tsx",
-    //     createView: { fieldMode: "edit" },
-    //     itemView: { fieldMode: "edit" },
-    //   },
-    // }),
-    //   field: graphql.field({
-    //     type: graphql.JSON,
-    //     async resolve(item, args, context) {
-    //       // Retorne os campos que quer passar para o componente React
-    //       return {
-    //         sourceType: item.sourceType,
-    //         youtubeUrl: item.youtubeUrl,
-    //         embedCode: item.embedCode,
-    //       };
-    //     },
-    //   }),
-    //   ui: {
-    //     views: "./admin/components/SourceTypeField",
-    //   },
-    // }),
 
     uploadedFile: file({
       storage: "video_files",
@@ -244,7 +210,6 @@ export const Video = list({
       const rawConfig = resolvedData.sourceConfig;
 
       if (rawConfig && typeof rawConfig === "object") {
-        // Se veio como objeto (ideal), desestrutura
         const { sourceType, youtubeUrl, embedCode } = rawConfig;
 
         resolvedData.sourceType = sourceType;
@@ -252,7 +217,6 @@ export const Video = list({
         resolvedData.embedCode = sourceType === "embed" ? embedCode : null;
       }
 
-      // --- Abaixo continua sua lógica para YouTube ---
       const { sourceType, youtubeUrl } = resolvedData;
 
       if (sourceType === "youtube" && youtubeUrl) {
@@ -273,41 +237,50 @@ export const Video = list({
         }
 
         const videoDetails = await fetchYoutubeVideoDetails(videoId);
-        if (videoDetails?.thumbnailUrl) {
+
+        if (!videoDetails) {
+          console.error(
+            `Não foi possível buscar os detalhes para o vídeo ID: ${videoId}`
+          );
+          return resolvedData;
+        }
+
+        let imageData;
+
+        if (videoDetails.thumbnailUrl) {
           try {
             const response = await axios.get(videoDetails.thumbnailUrl, {
               responseType: "stream",
             });
-
             if (response.status === 200) {
               const filename = `youtube-thumbnail-${videoId}${path.extname(
                 videoDetails.thumbnailUrl
               )}`;
-
-              const imageData = await context
+              imageData = await context
                 .images("thumbnails")
                 .getDataFromStream(response.data, filename);
-
-              return {
-                ...resolvedData,
-                videoId,
-                title: resolvedData.title || videoDetails.title,
-                description:
-                  resolvedData.description || videoDetails.description,
-                thumbnail: imageData,
-                author: resolvedData.author || videoDetails.channelTitle,
-                createdAt: videoDetails.createdAt || resolvedData.createdAt,
-                embedCode: videoDetails.embedCode || resolvedData.embedCode,
-              };
-            } else {
-              console.error("Erro ao baixar a thumbnail:", response.status);
+              console.log(
+                `Thumbnail for video ${videoId} successfully downloaded.`
+              );
             }
           } catch (error) {
-            console.error("Erro ao processar a thumbnail:", error);
+            console.error(
+              `Failed to download thumbnail for ${videoId}:`,
+              error
+            );
           }
-        } else {
-          console.warn("Nenhuma thumbnail encontrada para este vídeo.");
         }
+
+        return {
+          ...resolvedData,
+          videoId,
+          title: resolvedData.title || videoDetails.title,
+          description: resolvedData.description || videoDetails.description,
+          author: resolvedData.author || videoDetails.channelTitle,
+          createdAt: videoDetails.createdAt || resolvedData.createdAt,
+          embedCode: videoDetails.embedCode || resolvedData.embedCode,
+          ...(imageData && { thumbnail: imageData }),
+        };
       }
 
       return resolvedData;

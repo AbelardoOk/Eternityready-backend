@@ -58,6 +58,15 @@ export default withAuth(
         },
         storagePath: "public/videos",
       },
+      video_previews: {
+        kind: "local",
+        type: "file",
+        generateUrl: (path) => `/previews/${path}`,
+        serverRoute: {
+          path: "/previews",
+        },
+        storagePath: "public/previews",
+      },
       thumbnails: {
         kind: "local",
         type: "image",
