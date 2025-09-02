@@ -62,6 +62,7 @@ export const searchHandler = async (
       query: `  
         id
         sourceType
+        videoId
         title
         description
         createdAt
