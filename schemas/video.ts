@@ -172,7 +172,7 @@ export const Video = list({
     }),
 
     videoId: text({
-      label: "ID do Vídeo (YouTube)",
+      label: "ID from Video (YouTube)",
       isIndexed: "unique",
       ui: {
         createView: { fieldMode: "hidden" },
