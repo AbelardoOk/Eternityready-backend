@@ -11,6 +11,7 @@ import {
 } from "@keystone-6/core/fields";
 import { allowAll } from "@keystone-6/core/access";
 import axios from "axios";
+import { DateTime } from "luxon";
 
 function getYouTubeVideoId(url: string): string | null {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -18,16 +19,37 @@ function getYouTubeVideoId(url: string): string | null {
   return match && match[2].length === 11 ? match[2] : null;
 }
 
+function parseISODuration(isoDuration: string): string {
+  const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+  const matches = isoDuration.match(regex);
+
+  if (!matches) return "Error";
+
+  const hours = parseInt(matches[1] || "0");
+  const minutes = parseInt(matches[2] || "0");
+  const seconds = parseInt(matches[3] || "0");
+
+  const h = hours > 0 ? String(hours).padStart(2, "0") + ":" : "";
+  const m = String(minutes).padStart(2, "0");
+  const s = String(seconds).padStart(2, "0");
+
+  return `${h}${m}:${s}`;
+}
+
 async function fetchYoutubeVideoDetails(videoId: string) {
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) throw new Error("Youtube Api Key not set in .env file");
 
-  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=snippet`;
+  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=snippet,contentDetails`;
   const embed = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
   try {
     const { data } = await axios.get(url);
     if (data.items && data.items.length > 0) {
-      const snippet = data.items[0].snippet;
+      const item = data.items[0];
+      const snippet = item.snippet;
+      const duration = item.contentDetails?.duration
+        ? parseISODuration(item.contentDetails.duration)
+        : "00:00";
       return {
         title: snippet.title,
         description: snippet.description,
@@ -38,6 +60,7 @@ async function fetchYoutubeVideoDetails(videoId: string) {
         channelTitle: snippet.channelTitle,
         createdAt: snippet.publishedAt,
         embedCode: embed,
+        duration: duration,
       };
     }
     return null;
@@ -114,6 +137,7 @@ export const Video = list({
       },
       validation: { isRequired: false },
     }),
+
     description: text({
       ui: {
         description: "Optional description or summary of the video.",
@@ -122,6 +146,7 @@ export const Video = list({
       validation: { isRequired: false },
       db: { nativeType: "Text", isNullable: true },
     }),
+
     thumbnail: image({
       storage: "thumbnails",
       ui: {
@@ -147,6 +172,27 @@ export const Video = list({
           "Unique video identifier on YouTube (extracted from the URL).",
       },
     }),
+
+    duration: text({
+      label: "Duration (HH:MM:SS)",
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+        description: "Video duration automatically fetched from YouTube.",
+      },
+    }),
+
+    isNew: checkbox({
+      label: "New Video",
+      defaultValue: false,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+        description:
+          "Indicates if the video was published in the last 30 days.",
+      },
+    }),
+
     createdAt: timestamp({
       defaultValue: { kind: "now" },
       ui: {
@@ -233,7 +279,9 @@ export const Video = list({
 
         if (existing) {
           console.warn(`Video with ID ${videoId} already exists.`);
-          return existing;
+          throw new Error(
+            `Video with ID ${videoId} already exists in the database.`
+          );
         }
 
         const videoDetails = await fetchYoutubeVideoDetails(videoId);
@@ -244,6 +292,11 @@ export const Video = list({
           );
           return resolvedData;
         }
+
+        const publishedDate = DateTime.fromISO(videoDetails.createdAt);
+        const now = DateTime.now();
+        const daysDifference = now.diff(publishedDate, "days").days;
+        const isNew = daysDifference <= 30;
 
         let imageData;
 
@@ -279,6 +332,8 @@ export const Video = list({
           author: resolvedData.author || videoDetails.channelTitle,
           createdAt: videoDetails.createdAt || resolvedData.createdAt,
           embedCode: videoDetails.embedCode || resolvedData.embedCode,
+          duration: videoDetails.duration,
+          isNew: isNew,
           ...(imageData && { thumbnail: imageData }),
         };
       }
