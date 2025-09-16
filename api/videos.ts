@@ -64,8 +64,10 @@ export const searchHandler = async (
         sourceType
         videoId
         title
+        duration
         description
         createdAt
+        isNew
         thumbnail { url }
         author
         categories { id name }
@@ -112,7 +114,9 @@ export const videoHandler = async (
         title
         description
         videoId
+        Duration
         createdAt
+        isNew
         thumbnail { url }
         author
         categories { id name }
