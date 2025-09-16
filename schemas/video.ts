@@ -23,7 +23,7 @@ function parseISODuration(isoDuration: string): string {
   const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
   const matches = isoDuration.match(regex);
 
-  if (!matches) return "Error";
+  if (!matches) return "00:00";
 
   const hours = parseInt(matches[1] || "0");
   const minutes = parseInt(matches[2] || "0");
@@ -59,6 +59,7 @@ async function fetchYoutubeVideoDetails(videoId: string) {
           snippet.thumbnails.high?.url,
         channelTitle: snippet.channelTitle,
         createdAt: snippet.publishedAt,
+        publishedAt: snippet.publishedAt,
         embedCode: embed,
         duration: duration,
       };
@@ -226,11 +227,25 @@ export const Video = list({
       },
     }),
     verificationMessage: text({ defaultValue: "" }),
+    publishedAt: timestamp({
+      label: "Published on YouTube",
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+        description: "Original publication date of the video on YouTube.",
+      },
+    }),
   },
 
   ui: {
     listView: {
-      initialColumns: ["thumbnail", "title", "author", "isPublic"],
+      initialColumns: [
+        "thumbnail",
+        "title",
+        "author",
+        "publishedAt",
+        "isPublic",
+      ],
     },
   },
 
@@ -293,7 +308,7 @@ export const Video = list({
           return resolvedData;
         }
 
-        const publishedDate = DateTime.fromISO(videoDetails.createdAt);
+        const publishedDate = DateTime.fromISO(videoDetails.publishedAt);
         const now = DateTime.now();
         const daysDifference = now.diff(publishedDate, "days").days;
         const isNew = daysDifference <= 30;
@@ -330,7 +345,7 @@ export const Video = list({
           title: resolvedData.title || videoDetails.title,
           description: resolvedData.description || videoDetails.description,
           author: resolvedData.author || videoDetails.channelTitle,
-          createdAt: videoDetails.createdAt || resolvedData.createdAt,
+          publishedAt: videoDetails.publishedAt,
           embedCode: videoDetails.embedCode || resolvedData.embedCode,
           duration: videoDetails.duration,
           isNew: isNew,

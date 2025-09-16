@@ -114,7 +114,7 @@ export const videoHandler = async (
         title
         description
         videoId
-        Duration
+        duration
         createdAt
         isNew
         thumbnail { url }
