@@ -122,6 +122,8 @@ type Video {
   thumbnail: ImageFieldOutput
   author: String
   videoId: String
+  duration: String
+  isNew: Boolean
   createdAt: DateTime
   isPublic: Boolean
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
@@ -169,6 +171,8 @@ input VideoWhereInput {
   description: StringNullableFilter
   author: StringFilter
   videoId: StringFilter
+  duration: StringFilter
+  isNew: BooleanFilter
   createdAt: DateTimeNullableFilter
   isPublic: BooleanFilter
   categories: CategoryManyRelationFilter
@@ -210,6 +214,8 @@ input VideoOrderByInput {
   description: OrderDirection
   author: OrderDirection
   videoId: OrderDirection
+  duration: OrderDirection
+  isNew: OrderDirection
   createdAt: OrderDirection
   isPublic: OrderDirection
   isRestricted: OrderDirection
@@ -226,6 +232,8 @@ input VideoUpdateInput {
   thumbnail: ImageFieldInput
   author: String
   videoId: String
+  duration: String
+  isNew: Boolean
   createdAt: DateTime
   isPublic: Boolean
   categories: CategoryRelateToManyForUpdateInput
@@ -266,6 +274,8 @@ input VideoCreateInput {
   thumbnail: ImageFieldInput
   author: String
   videoId: String
+  duration: String
+  isNew: Boolean
   createdAt: DateTime
   isPublic: Boolean
   categories: CategoryRelateToManyForCreateInput

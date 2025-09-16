@@ -35,6 +35,8 @@ model Video {
   thumbnail_extension   String?
   author                String     @default("")
   videoId               String     @unique @default("")
+  duration              String     @default("")
+  isNew                 Boolean    @default(false)
   createdAt             DateTime?  @default(now())
   isPublic              Boolean    @default(true)
   categories            Category[] @relation("Category_videos")
