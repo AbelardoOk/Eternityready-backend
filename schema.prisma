@@ -39,9 +39,11 @@ model Video {
   isNew                 Boolean    @default(false)
   createdAt             DateTime?  @default(now())
   isPublic              Boolean    @default(true)
+  featured              Boolean    @default(false)
   categories            Category[] @relation("Category_videos")
   isRestricted          Boolean    @default(false)
   verificationMessage   String     @default("")
+  publishedAt           DateTime?
 }
 
 model Ad {

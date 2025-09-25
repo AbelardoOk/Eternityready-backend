@@ -126,10 +126,12 @@ type Video {
   isNew: Boolean
   createdAt: DateTime
   isPublic: Boolean
+  featured: Boolean
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
   isRestricted: Boolean
   verificationMessage: String
+  publishedAt: DateTime
 }
 
 type FileFieldOutput {
@@ -175,9 +177,11 @@ input VideoWhereInput {
   isNew: BooleanFilter
   createdAt: DateTimeNullableFilter
   isPublic: BooleanFilter
+  featured: BooleanFilter
   categories: CategoryManyRelationFilter
   isRestricted: BooleanFilter
   verificationMessage: StringFilter
+  publishedAt: DateTimeNullableFilter
 }
 
 input StringNullableFilter {
@@ -218,8 +222,10 @@ input VideoOrderByInput {
   isNew: OrderDirection
   createdAt: OrderDirection
   isPublic: OrderDirection
+  featured: OrderDirection
   isRestricted: OrderDirection
   verificationMessage: OrderDirection
+  publishedAt: OrderDirection
 }
 
 input VideoUpdateInput {
@@ -236,9 +242,11 @@ input VideoUpdateInput {
   isNew: Boolean
   createdAt: DateTime
   isPublic: Boolean
+  featured: Boolean
   categories: CategoryRelateToManyForUpdateInput
   isRestricted: Boolean
   verificationMessage: String
+  publishedAt: DateTime
 }
 
 input FileFieldInput {
@@ -278,9 +286,11 @@ input VideoCreateInput {
   isNew: Boolean
   createdAt: DateTime
   isPublic: Boolean
+  featured: Boolean
   categories: CategoryRelateToManyForCreateInput
   isRestricted: Boolean
   verificationMessage: String
+  publishedAt: DateTime
 }
 
 input CategoryRelateToManyForCreateInput {

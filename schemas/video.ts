@@ -209,6 +209,13 @@ export const Video = list({
           "Controls whether the video is publicly visible or hidden.",
       },
     }),
+    featured: checkbox({
+      defaultValue: false,
+      label: "Public",
+      ui: {
+        description: "Videos marked as featured appear in a dedicated slider.",
+      },
+    }),
     categories: relationship({
       ref: "Category.videos",
       many: true,

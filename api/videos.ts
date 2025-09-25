@@ -64,6 +64,7 @@ export const searchHandler = async (
         sourceType
         videoId
         title
+        featured
         duration
         description
         createdAt
@@ -113,6 +114,7 @@ export const videoHandler = async (
         sourceType
         title
         description
+        featured
         videoId
         duration
         createdAt
