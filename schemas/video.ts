@@ -211,7 +211,7 @@ export const Video = list({
     }),
     featured: checkbox({
       defaultValue: false,
-      label: "Public",
+      label: "Featured",
       ui: {
         description: "Videos marked as featured appear in a dedicated slider.",
       },
