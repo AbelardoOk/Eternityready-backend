@@ -156,7 +156,7 @@ export default withAuth(
           await verifyVideosHandler(req, res, context);
         });
 
-        app.get("/api/video/featured", async (req: Request, res: Response) => {
+        app.get("/api/highlight", async (req: Request, res: Response) => {
           await featuredVideosHandler(req, res, context);
         });
       },

@@ -148,7 +148,7 @@ export const featuredVideosHandler = async (
   }
 
   try {
-    const video = await context.query.Video.findOne({
+    const videos = await context.query.Video.findMany({
       where: {
         highlight: { equals: true },
         isPublic: { equals: true }
@@ -169,12 +169,12 @@ export const featuredVideosHandler = async (
       `,
     });
 
-    if (!video) {
-      return res.status(404).json({ error: "Video not found or not public." });
+    if (!videos || videos.length === 0) {
+      return res.status(404).json({ error: "No highlighted videos found or none are public." });
     }
 
     return res.status(200).json({
-      video,
+      videos,
     });
   } catch (error) {
     console.error("Erro ao buscar vídeos:", error);
