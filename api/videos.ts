@@ -147,18 +147,11 @@ export const featuredVideosHandler = async (
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { id: videoId } = req.params;
-
-  if (!videoId) {
-    return res
-      .status(400)
-      .json({ error: "The video ID is required in the URL." });
-  }
-
   try {
     const video = await context.query.Video.findOne({
       where: {
         highlight: { equals: true },
+        isPublic: { equals: true }
       },
       query: `  
         id
