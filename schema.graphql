@@ -127,6 +127,7 @@ type Video {
   createdAt: DateTime
   isPublic: Boolean
   featured: Boolean
+  highlight: Boolean
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
   isRestricted: Boolean
@@ -178,6 +179,7 @@ input VideoWhereInput {
   createdAt: DateTimeNullableFilter
   isPublic: BooleanFilter
   featured: BooleanFilter
+  highlight: BooleanFilter
   categories: CategoryManyRelationFilter
   isRestricted: BooleanFilter
   verificationMessage: StringFilter
@@ -223,6 +225,7 @@ input VideoOrderByInput {
   createdAt: OrderDirection
   isPublic: OrderDirection
   featured: OrderDirection
+  highlight: OrderDirection
   isRestricted: OrderDirection
   verificationMessage: OrderDirection
   publishedAt: OrderDirection
@@ -243,6 +246,7 @@ input VideoUpdateInput {
   createdAt: DateTime
   isPublic: Boolean
   featured: Boolean
+  highlight: Boolean
   categories: CategoryRelateToManyForUpdateInput
   isRestricted: Boolean
   verificationMessage: String
@@ -287,6 +291,7 @@ input VideoCreateInput {
   createdAt: DateTime
   isPublic: Boolean
   featured: Boolean
+  highlight: Boolean
   categories: CategoryRelateToManyForCreateInput
   isRestricted: Boolean
   verificationMessage: String

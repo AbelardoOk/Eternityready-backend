@@ -216,6 +216,14 @@ export const Video = list({
         description: "Videos marked as featured appear in a dedicated slider.",
       },
     }),
+    highlight: checkbox({
+      defaultValue: false,
+      label: "Hightlight",
+      ui: {
+        description:
+          "Videos marked as highlight appear in hero section at home.",
+      },
+    }),
     categories: relationship({
       ref: "Category.videos",
       many: true,
